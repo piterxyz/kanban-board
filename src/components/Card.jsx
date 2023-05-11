@@ -5,15 +5,7 @@ import { Draggable } from 'react-beautiful-dnd';
 import BoardContext from '../contexts/BoardContext';
 
 export default function Card({ id, title, labelId, index }) {
-    const { tasks, setTasks, labels, setEditCard } = useContext(BoardContext);
-
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-
-    const handleEditTaskClick = (event) => {
-        setMousePosition({ x: event.pageX, y: event.pageY });
-        setIsModalOpen(true);
-    };
+    const { labels, setEditCard } = useContext(BoardContext);
 
     return (
         <div>
@@ -21,6 +13,7 @@ export default function Card({ id, title, labelId, index }) {
                 key={`card-${id}`}
                 draggableId={`card-${id}`}
                 index={index}
+                isDragDisabled={labels.filter(l => !l.active).length >= 1}
             >
                 {(innerProvided) => (
                     <div

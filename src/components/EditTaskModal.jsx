@@ -66,7 +66,7 @@ export default function EditTaskModal({ onClose, cardId }) {
                                 />
                             </div>
                             <div>
-                                <h2 className="font-semibold mb-1">Card Label</h2>
+                                <h3 className="font-semibold mb-1">Card Label</h3>
                                 <div className="flex flex-wrap gap-1 mb-3">
                                     {
                                         labels.map(label => (
@@ -83,7 +83,7 @@ export default function EditTaskModal({ onClose, cardId }) {
                                 </div>
                             </div>
                             <div className="mb-3">
-                                <h2 className="font-semibold mb-1">Card Preview</h2>
+                                <h3 className="font-semibold mb-1">Card Preview</h3>
                                 <CardPreview title={taskTitle} labelId={labelId} />
                             </div>
                         </div>

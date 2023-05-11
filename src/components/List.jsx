@@ -8,10 +8,9 @@ import { Draggable, Droppable } from 'react-beautiful-dnd';
 import BoardContext from '../contexts/BoardContext';
 
 export default function List({ title, id, listTasks, filteredTasks, index }) {
-    const { tasks, setTasks, lists, setLists, labels, editCard, setEditCard } = useContext(BoardContext);
+    const { tasks, setTasks, lists, setLists, editCard, setEditCard } = useContext(BoardContext);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isEditing, setIsEditing] = useState(undefined);
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
     const handleAddTaskClick = (event) => {
@@ -62,11 +61,10 @@ export default function List({ title, id, listTasks, filteredTasks, index }) {
                                     className="px-3 pt-1 overflow-y-auto flex-1"
                                 >
                                     {listTasks.map((task, index) => {
+                                        if (!filteredTasks.includes(task)) return;
+
                                         return (
-                                            <div
-                                                key={`task-${task.id}`}
-                                                className={`duration-300 ${!filteredTasks.includes(task) && task.labelId != undefined ? 'brightness-75' : ''}`}
-                                            >
+                                            <div key={`task-${task.id}`}>
                                                 <Card
                                                     id={task.id}
                                                     title={task.title}

@@ -1,11 +1,11 @@
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import List from './List';
+import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { useContext } from 'react';
 
+import List from './List';
 import BoardContext from '../contexts/BoardContext';
 
 export default function ListContainer() {
-    const { tasks, setTasks, labels, setLabels, lists, setLists, editCard, setEditCard } = useContext(BoardContext);
+    const { tasks, setTasks, labels, lists, setLists } = useContext(BoardContext);
     
     const handleCreateList = () => {
         const newList = {
@@ -15,27 +15,24 @@ export default function ListContainer() {
         setLists([...lists, newList]);
     };
 
-    const handleDragEnd = (result) => {
-        const { destination, source, draggableId, type } = result;
-
-        console.log(destination, source, draggableId, type)
+    const handleDragEnd = ({ destination, source, draggableId, type }) => {
         if (!destination) return;
 
         if (type === 'list') {
-            const updatedLists = Array.from(lists);
+            const updatedLists = lists;
             const [removedList] = updatedLists.splice(source.index, 1);
             updatedLists.splice(destination.index, 0, removedList);
             setLists(updatedLists);
         }
 
         if (type === 'card') {
-            let updatedTasks = Array.from(tasks);
+            let updatedTasks = tasks;
             const [removedTask] = updatedTasks.filter(task => task.id == draggableId.split('-')[1]);
-            console.log(updatedTasks)
+
             updatedTasks = updatedTasks.filter(task => task.id != draggableId.split('-')[1]);
             removedTask.listId = parseInt(destination.droppableId.split('-')[1]);
             updatedTasks.splice(destination.index, 0, removedTask);
-            console.log(updatedTasks)
+
             setTasks(updatedTasks);
         }
     };
