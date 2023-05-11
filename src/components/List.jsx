@@ -61,10 +61,10 @@ export default function List({ title, id, listTasks, filteredTasks, index }) {
                                     className="px-3 pt-1 overflow-y-auto flex-1"
                                 >
                                     {listTasks.map((task, index) => {
-                                        if (!filteredTasks.includes(task)) return;
+                                        if (task.labelId != undefined && !filteredTasks.includes(task)) return;
 
                                         return (
-                                            <div key={`task-${task.id}`}>
+                                            <div>
                                                 <Card
                                                     id={task.id}
                                                     title={task.title}

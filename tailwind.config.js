@@ -16,6 +16,9 @@ export default {
     'shadow-[#8b5cf6]',
     'shadow-[#EC706C]',
     'shadow-[#eab308]',
+    {
+      pattern: /(bg|shadow)-(green|blue|violet|red|yellow)-(400|500)(\/80)?/
+    }
   ],
   theme: {
     extend: {},
