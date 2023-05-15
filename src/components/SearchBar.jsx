@@ -1,37 +1,26 @@
 import { FaSearch } from 'react-icons/fa';
-import { motion, useAnimation } from 'framer-motion';
 import { useRef, useState, useEffect, useContext } from 'react';
+
 import CardPreview from './CardPreview';
 import BoardContext from '../contexts/BoardContext';
 
 export default function SearchBar() {
-    const { tasks, setEditCard } = useContext(BoardContext);
+    const { lists, setEditCard } = useContext(BoardContext);
 
     const [searchQuery, setSearchQuery] = useState('');
     const [active, setActive] = useState(false);
-    const animationControls = useAnimation();
     const searchBarRef = useRef(null);
 
-    const setDivMaxWidth = (width) => {
-        animationControls.start({ width: width });
-    };
+    const filteredCards = lists.map(list => {
+        const filteredCards = list.cards.filter(card => card.title.toLowerCase().includes(searchQuery));
+        if (filteredCards.length) return { list: list, cards: filteredCards };
+        else return;
+    })
 
-    const handleFocus = () => {
-        setActive(true);
-        setDivMaxWidth("100%");
-    }
-
-    const handleBlur = () => {
-        setDivMaxWidth("75%");
-        setActive(false);
-    }
-
-    const filteredTasks = tasks.filter(t => t.title.toLowerCase().includes(searchQuery));
-    console.log(filteredTasks.length, filteredTasks)
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (searchBarRef.current && !searchBarRef.current.contains(event.target)) {
-                handleBlur();
+                setActive(false);
             }
         };
 
@@ -43,47 +32,50 @@ export default function SearchBar() {
     }, [searchBarRef]);
 
     return (
-        <div className='relative w-[95vw] lg:w-[400px] flex justify-center'>
-            <motion.div
-                ref={searchBarRef}
-                className={`flex items-center justify-between bg-slate-800 ${active ? 'rounded-t-md' : 'rounded-md'} ring-1 ring-slate-600/50 shadow-sm px-3`}
-                initial={{ width: "75%" }}
-                animate={animationControls}
-            >
+        <div
+            ref={searchBarRef}
+            className='relative w-[95vw] md:w-[300px] flex justify-center'
+        >
+            <div className={`w-full flex items-center justify-between bg-slate-800 ${active ? 'rounded-t-md' : 'rounded-md'} ring-1 ring-slate-600/50 shadow-sm px-3`}>
                 <input
                     type="text"
-                    placeholder='Search for tasks...'
+                    placeholder='Search for cards...'
                     className='h-9 outline-none bg-transparent w-[99%]'
-                    onClick={() => handleFocus()}
+                    onClick={() => setActive(true)}
                     onChange={(e) => setSearchQuery(e.target.value)}
                 />
                 <div><FaSearch /></div>
 
                 {active && (
                     <div
-                        className={`absolute z-10 top-full left-0 bg-slate-800 rounded-b-md ring-1 ring-slate-600/50 w-full flex flex-col items-center justify-center py-2 gap-2`}
+                        className={`max-h-[50vh] px-2 overflow-y-auto absolute z-10 top-full left-0 bg-slate-800 rounded-b-md ring-1 ring-slate-600/50 w-full`}
                     >
-                        {
-                            filteredTasks.length && searchQuery ? filteredTasks.map(t => (
-                                <div
-                                    key={t.id}
-                                    className='w-full px-2 duration-200 hover:brightness-75 hover:cursor-pointer'
-                                    onClick={() => {
-                                        setEditCard(t.id)
-                                        handleBlur()
-                                    }}
-                                >
-                                    <CardPreview title={t.title} labelId={t.labelId} />
-                                </div>
-                            )) : (
-                                <div className='w-full px-2'>
-                                    No results.
-                                </div>
-                            )
-                        }
+                        {filteredCards.length && searchQuery ? filteredCards.map(data => (
+                            <div key={data.list.id} className='flex flex-col py-2 gap-2'>
+                                {data && data.list && <h2 className='font-semibold'>{data.list.title}</h2>}
+                                {data && data.cards && data.cards.map(card => {
+                                    return (
+                                        <div
+                                            key={card.id}
+                                            className='w-full duration-200 hover:brightness-[90%] hover:cursor-pointer'
+                                            onClick={() => {
+                                                setEditCard(card)
+                                                setActive(false)
+                                            }}
+                                        >
+                                            <CardPreview title={card.title} labelId={card.labelId} />
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                        )) : (
+                            <div className='w-full px-1 py-2'>
+                                No results.
+                            </div>
+                        )}
                     </div>
                 )}
-            </motion.div>
+            </div>
         </div>
     )
 }
