@@ -1,17 +1,17 @@
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import { FaPencilAlt } from 'react-icons/fa';
 import { Draggable } from 'react-beautiful-dnd';
 
 import BoardContext from '../contexts/BoardContext';
 
-export default function Card({ id, title, labelId, index }) {
+export default function Card({ data, index }) {
     const { labels, setEditCard } = useContext(BoardContext);
 
     return (
         <div>
             <Draggable
-                key={`card-${id}`}
-                draggableId={`card-${id}`}
+                key={`card-${data.id}`}
+                draggableId={`card-${data.id}`}
                 index={index}
                 isDragDisabled={labels.filter(l => !l.active).length >= 1}
             >
@@ -23,20 +23,20 @@ export default function Card({ id, title, labelId, index }) {
                         className="mb-2 bg-gray-700 rounded-md shadow-lg p-2 w-full"
                     >
                         <div className="flex items-start justify-between">
-                            <h2 className="text-gray-200 w-11/12 break-words">{title}</h2>
+                            <h2 className="text-gray-200 w-11/12 break-words">{data.title}</h2>
                             <div>
                                 <button
                                     className="focus:outline-none hover:bg-gray-500 hover:text-white p-1 rounded-md duration-200"
-                                    onClick={(e) => setEditCard(id)}
+                                    onClick={() => setEditCard(data)}
                                 >
                                     <FaPencilAlt />
                                 </button>
                             </div>
                         </div>
-                        {labelId !== undefined && (
+                        {data.labelId !== undefined && (
                             <div className="flex items-center mt-2">
                                 {labels
-                                    .filter((label) => label.id === labelId)
+                                    .filter((label) => label.id === data.labelId)
                                     .map((label) => (
                                         <span
                                             key={label.text}

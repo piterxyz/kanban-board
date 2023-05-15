@@ -5,12 +5,13 @@ import List from './List';
 import BoardContext from '../contexts/BoardContext';
 
 export default function ListContainer() {
-    const { tasks, setTasks, labels, lists, setLists } = useContext(BoardContext);
-    
+    const { lists, setLists } = useContext(BoardContext);
+
     const handleCreateList = () => {
         const newList = {
             title: 'New List',
-            id: lists.length + 1
+            id: lists.length + 1,
+            cards: []
         };
         setLists([...lists, newList]);
     };
@@ -26,14 +27,43 @@ export default function ListContainer() {
         }
 
         if (type === 'card') {
-            let updatedTasks = tasks;
-            const [removedTask] = updatedTasks.filter(task => task.id == draggableId.split('-')[1]);
+            const sourceListId = parseInt(source.droppableId.split('-')[1]);
+            const destinationListId = parseInt(destination.droppableId.split('-')[1]);
+            const cardId = parseInt(draggableId.split('-')[1]);
+            const card = lists.filter(list => list.id == sourceListId)[0].cards.filter(card => card.id == cardId)[0];
 
-            updatedTasks = updatedTasks.filter(task => task.id != draggableId.split('-')[1]);
-            removedTask.listId = parseInt(destination.droppableId.split('-')[1]);
-            updatedTasks.splice(destination.index, 0, removedTask);
+            setLists(prevLists => {
+                const updatedLists = prevLists.map(list => {
+                    if (list.id == sourceListId && list.id == destinationListId) {
+                        const updatedCards = list.cards;
+                        updatedCards.splice(source.index, 1);
+                        updatedCards.splice(destination.index, 0, card);
+                        return {
+                            ...list,
+                            cards: updatedCards
+                        }
+                    }
+                    if (list.id == sourceListId) {
+                        return {
+                            ...list,
+                            cards: list.cards.filter(card => card.id !== cardId)
+                        };
+                    }
+                    if (list.id == destinationListId) {
+                        return {
+                            ...list,
+                            cards: [
+                                ...list.cards.slice(0, destination.index),
+                                card,
+                                ...list.cards.slice(destination.index)
+                            ]
+                        };
+                    }
+                    return list;
+                });
 
-            setTasks(updatedTasks);
+                return updatedLists;
+            });
         }
     };
 
@@ -51,10 +81,7 @@ export default function ListContainer() {
                                 lists.map((list, index) => (
                                     <List
                                         key={`list-${list.id}`}
-                                        title={list.title}
-                                        id={list.id}
-                                        listTasks={tasks.filter((task) => task.listId === list.id)}
-                                        filteredTasks={tasks.filter(task => labels.filter(label => label.active && label.id == task.labelId).length)}
+                                        data={list}
                                         index={index}
                                     />
                                 ))
