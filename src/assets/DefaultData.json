@@ -3,31 +3,26 @@
         {
             "id": 0,
             "text": "feature",
-            "color": "bg-green-400/80 shadow-green-400/80",
             "active": true
         },
         {
             "id": 1,
             "text": "refactor",
-            "color": "bg-blue-400/80 shadow-blue-400/80",
             "active": true
         },
         {
             "id": 2,
             "text": "suggestion",
-            "color": "bg-violet-400/80 shadow-violet-400/80",
             "active": true
         },
         {
             "id": 3,
             "text": "bug",
-            "color": "bg-red-400/80 shadow-red-400/80",
             "active": true
         },
         {
             "id": 4,
             "text": "security",
-            "color": "bg-yellow-500 shadow-yellow-500",
             "active": true
         }
     ],
